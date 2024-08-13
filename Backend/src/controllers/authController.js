@@ -2,11 +2,32 @@ const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const APIResponse = require('../utils/ApiResponse'); 
 
-// Register a new user
+// Register a new user (Teacher or Student)
 const register = async (req, res) => {
-    const { email, password, name, role, assignedClassroom } = req.body;
+    const { email, password, name, role } = req.body;
     console.log('Register Request Body:', req.body);
+
     try {
+        // Check if the logged-in user is a Principal
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return APIResponse.unauthorizedResponse(res, 'Authorization header is missing or invalid');
+        }
+
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const loggedInUser = await User.findById(decoded.id);
+        console.log('Logged In User:', loggedInUser);
+
+        if (!loggedInUser || loggedInUser.role !== 'Principal') {
+            return APIResponse.forbiddenResponse(res, 'Only Principal can create accounts');
+        }
+
+        // Check if the role being created is valid
+        if (role !== 'Teacher' && role !== 'Student') {
+            return APIResponse.validationErrorResponse(res, 'Invalid role. Only Teacher or Student can be created');
+        }
+
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         console.log('Existing User:', existingUser);
@@ -16,7 +37,7 @@ const register = async (req, res) => {
         }
 
         // Create new user if not exists
-        const user = await User.create({ email, password, name, role, assignedClassroom });
+        const user = await User.create({ email, password, name, role });
         console.log('New User Created:', user);
 
         APIResponse.createdResponse(res, 'User created successfully', user);
@@ -58,10 +79,7 @@ const login = async (req, res) => {
 
 // Logout a user
 const logout = (req, res) => {
-   
-
     try {
-        
         APIResponse.successResponse(res, 'User logged out successfully');
     } catch (error) {
         console.error("Logout Error:", error); 
