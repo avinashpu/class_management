@@ -1,17 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from './pages/Login';
-import SignupPage from './pages/Signup';
+import Principlelogin from './pages/Principlelogin';
 import Dashboard from './pages/Dashboard';
+import Studentlogin from "./pages/Studentlogin";
+import Teacherlogin from "./pages/Teacherlogin";
+import Principlesidebar from './componnets/Principle/Principlesidebar';
+import Teachersidebar from './componnets/Teacher/Teachersidebar';
+import Studentsidebar from './componnets/Student/Studentsidebar';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* You can add more routes here */}
+      <Route path="/" element={<Dashboard />} />
+        <Route path="/principlelogin" element={< Principlelogin/>} />
+        <Route path="/studentlogin" element={<Studentlogin />} />
+        <Route path="/teacherlogin" element={<Teacherlogin />} />
+        <Route path="/principlesidebar" element={< Principlesidebar />} />
+        <Route path="/teachersidebar" element={< Teachersidebar />} />
+        <Route path="/studentsidebar" element={< Studentsidebar />} />
+        
       </Routes>
     </Router>
   );

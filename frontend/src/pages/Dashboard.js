@@ -1,12 +1,39 @@
-import React from 'react';
+import React from 'react';   
+import { useNavigate } from 'react-router-dom';   
 
-const Dashboard = () => {
-  return (
-    <div className="dashboard-container">
-      <h2>Welcome to the Dashboard</h2>
-      <p>This is where you can manage your classrooms, teachers, and students.</p>
-    </div>
-  );
-};
+
+const Dashboard = () => {  
+  const navigate = useNavigate();  
+
+  const handleNavigate = (path) => {  
+    navigate(path);  
+  };  
+
+  return (  
+    <div className="dashboard-container">  
+      <h1>Dashboard</h1>  
+      <div className="boxes-container">  
+        <div   
+          className="box"   
+          onClick={() => handleNavigate('/principlelogin')}   
+        >  
+          <h2>Login Principal</h2>  
+        </div>  
+        <div   
+          className="box"   
+          onClick={() => handleNavigate('/studentlogin')}   
+        >  
+          <h2>Login Student</h2>  
+        </div>  
+        <div   
+          className="box"   
+          onClick={() => handleNavigate('/teacherlogin')}   
+        >  
+          <h2>Login Teacher</h2>  
+        </div>  
+      </div>  
+    </div>  
+  );  
+};  
 
 export default Dashboard;
