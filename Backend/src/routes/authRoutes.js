@@ -1,5 +1,13 @@
 const express = require('express');
-const { register, login, logout, updateUser, deleteUser } = require('../controllers/authController');
+const {
+    register,
+    login,
+    logout,
+    updateUser,
+    deleteUser,
+    getAllTeachers,
+    getAllStudents
+} = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -17,5 +25,11 @@ router.put('/users/:id', updateUser);
 
 // Delete a user (requires authorization)
 router.delete('/users/:id', deleteUser);
+
+// Get all teachers (requires authorization)
+router.get('/teachers', getAllTeachers);
+
+// Get all students (requires authorization)
+router.get('/students', getAllStudents);
 
 module.exports = router;

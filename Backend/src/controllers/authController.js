@@ -180,4 +180,31 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { register, login, logout, updateUser, deleteUser };
+// Fetch all teachers
+const getAllTeachers = async (req, res) => {
+    try {
+        const teachers = await User.find({ role: 'Teacher' });
+        console.log('All Teachers:', teachers);
+        APIResponse.successResponse(res, 'Teachers fetched successfully', teachers);
+    } catch (error) {
+        console.error('Get Teachers Error:', error); 
+        APIResponse.errorResponse(res, error.message);
+    }
+};
+
+// Fetch all students
+const getAllStudents = async (req, res) => {
+    try {
+        const students = await User.find({ role: 'Student' });
+        console.log('All Students:', students);
+        APIResponse.successResponse(res, 'Students fetched successfully', students);
+    } catch (error) {
+        console.error('Get Students Error:', error); 
+        APIResponse.errorResponse(res, error.message);
+    }
+};
+
+module.exports = { register, login, logout, updateUser, deleteUser, getAllTeachers, getAllStudents };
+
+
+
