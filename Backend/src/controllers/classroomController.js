@@ -1,80 +1,97 @@
-// controllers/classroomController.js
-
 const Classroom = require('../models/Classroom.model');
+const User = require('../models/user.model');
 const APIResponse = require('../utils/ApiResponse');
 
 // Create a classroom
 const createClassroom = async (req, res) => {
-    const { name, daysOfOperation } = req.body;
+    const { name, startTime, endTime, days, teacherIds, studentIds } = req.body;
     console.log('Create Classroom Request Body:', req.body);
 
     try {
-        // Check if classroom already exists
-        const existingClassroom = await Classroom.findOne({ name });
-        console.log('Existing Classroom:', existingClassroom);
+        const classroom = new Classroom({ name, startTime, endTime, days });
 
-        if (existingClassroom) {
-            return APIResponse.validationErrorResponse(res, 'Classroom already exists');
+        if (teacherIds && teacherIds.length > 0) {
+            const teacher = await User.findById(teacherIds[0]); // Assuming single teacher assignment
+            if (teacher && teacher.role === 'Teacher') {
+                classroom.teacher = teacher._id;
+            } else {
+                return APIResponse.validationErrorResponse(res, 'Invalid teacher ID');
+            }
         }
 
-        // Create new classroom if not exists
-        const classroom = await Classroom.create({ name, daysOfOperation });
-        console.log('New Classroom Created:', classroom);
+        if (studentIds && studentIds.length > 0) {
+            const students = await User.find({ _id: { $in: studentIds } });
+            if (students.every(student => student.role === 'Student')) {
+                classroom.students = students.map(student => student._id);
+            } else {
+                return APIResponse.validationErrorResponse(res, 'Invalid student IDs');
+            }
+        }
 
-        APIResponse.createdResponse(res, 'Classroom created successfully', classroom);
+        const newClassroom = await classroom.save();
+        console.log('New Classroom Created:', newClassroom);
+
+        APIResponse.createdResponse(res, 'Classroom created successfully', newClassroom);
     } catch (error) {
-        console.error('Create Classroom Error:', error);
+        console.error('Create Classroom Error:', error); 
         APIResponse.errorResponse(res, error.message);
     }
 };
 
-// Update a classroom
-const updateClassroom = async (req, res) => {
-    const { id } = req.params;
-    const { name, daysOfOperation } = req.body;
-    console.log('Update Classroom Request Body:', req.body);
+// Assign teacher to a classroom
+const assignTeacher = async (req, res) => {
+    const { classroomId, teacherId } = req.body;
+    console.log('Assign Teacher Request:', req.body);
 
     try {
-        // Check if classroom exists
-        const classroom = await Classroom.findById(id);
-        console.log('Classroom Found:', classroom);
+        const classroom = await Classroom.findById(classroomId);
+        const teacher = await User.findById(teacherId);
 
         if (!classroom) {
-            return APIResponse.validationErrorResponse(res, 'Classroom not found');
+            return APIResponse.notFoundResponse(res, 'Classroom not found');
         }
 
-        // Update classroom details
-        const updatedClassroom = await Classroom.findByIdAndUpdate(id, { name, daysOfOperation }, { new: true });
-        console.log('Updated Classroom:', updatedClassroom);
+        if (!teacher || teacher.role !== 'Teacher') {
+            return APIResponse.validationErrorResponse(res, 'Invalid teacher ID');
+        }
 
-        APIResponse.successResponse(res, 'Classroom updated successfully', updatedClassroom);
+        classroom.teacher = teacherId;
+        await classroom.save();
+        console.log('Teacher Assigned:', teacher);
+
+        APIResponse.successResponse(res, 'Teacher assigned successfully', classroom);
     } catch (error) {
-        console.error('Update Classroom Error:', error);
+        console.error('Assign Teacher Error:', error); 
         APIResponse.errorResponse(res, error.message);
     }
 };
 
-// Delete a classroom
-const deleteClassroom = async (req, res) => {
-    const { id } = req.params;
-    console.log('Delete Classroom Request Body:', req.params);
+// Assign students to a classroom
+const assignStudents = async (req, res) => {
+    const { classroomId, studentIds } = req.body;
+    console.log('Assign Students Request:', req.body);
 
     try {
-        // Check if classroom exists
-        const classroom = await Classroom.findById(id);
-        console.log('Classroom Found:', classroom);
+        const classroom = await Classroom.findById(classroomId);
+        const students = await User.find({ _id: { $in: studentIds } });
 
         if (!classroom) {
-            return APIResponse.validationErrorResponse(res, 'Classroom not found');
+            return APIResponse.notFoundResponse(res, 'Classroom not found');
         }
 
-        // Delete classroom
-        await Classroom.findByIdAndDelete(id);
-        APIResponse.successResponse(res, 'Classroom deleted successfully');
+        if (students.some(student => student.role !== 'Student')) {
+            return APIResponse.validationErrorResponse(res, 'Invalid student IDs');
+        }
+
+        classroom.students = studentIds;
+        await classroom.save();
+        console.log('Students Assigned:', students);
+
+        APIResponse.successResponse(res, 'Students assigned successfully', classroom);
     } catch (error) {
-        console.error('Delete Classroom Error:', error);
+        console.error('Assign Students Error:', error); 
         APIResponse.errorResponse(res, error.message);
     }
 };
 
-module.exports = { createClassroom, updateClassroom, deleteClassroom };
+module.exports = { createClassroom, assignTeacher, assignStudents };

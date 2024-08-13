@@ -1,16 +1,32 @@
-// models/Classroom.model.js
-
 const mongoose = require('mongoose');
 
-const DayTimeSchema = new mongoose.Schema({
-    day: { type: String, required: true }, // e.g., Monday
-    startTime: { type: String, required: true }, // e.g., "12:00 PM"
-    endTime: { type: String, required: true } // e.g., "06:00 PM"
-});
+const classroomSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    startTime: {
+        type: String,
+        required: true // format should be HH:MM (24-hour format)
+    },
+    endTime: {
+        type: String,
+        required: true // format should be HH:MM (24-hour format)
+    },
+    days: {
+        type: [String], // e.g., ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        required: true
+    },
+    teacher: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Teacher assigned to the classroom
+        required: false
+    },
+    students: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // Students assigned to the classroom
+    }]
+}, { timestamps: true });
 
-const ClassroomSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    daysOfOperation: [DayTimeSchema]
-});
-
-module.exports = mongoose.model('Classroom', ClassroomSchema);
+module.exports = mongoose.model('Classroom', classroomSchema);
