@@ -158,21 +158,25 @@ const deleteUser = async (req, res) => {
             return APIResponse.unauthorizedResponse(res, 'Logged in user not found');
         }
 
-        if (loggedInUser.role === 'Principal' || (loggedInUser.role === 'Teacher' && await User.findById(id).then(user => user.role === 'Student'))) {
-            const userToDelete = await User.findById(id);
-            if (!userToDelete) {
-                return APIResponse.notFoundResponse(res, 'User not found');
-            }
-            await userToDelete.remove();
+        // Ensure the logged-in user has the right role to delete the user
+        const userToDelete = await User.findById(id);
+        if (!userToDelete) {
+            return APIResponse.notFoundResponse(res, 'User not found');
+        }
+
+        if (loggedInUser.role === 'Principal' || 
+            (loggedInUser.role === 'Teacher' && userToDelete.role === 'Student')) {
+            
+            await User.findByIdAndDelete(id);
             console.log('User Deleted:', userToDelete);
 
-            APIResponse.successResponse(res, 'User deleted successfully');
+            return APIResponse.successResponse(res, 'User deleted successfully');
         } else {
             return APIResponse.forbiddenResponse(res, 'Unauthorized to delete this user');
         }
     } catch (error) {
         console.error('Delete Error:', error); 
-        APIResponse.errorResponse(res, error.message);
+        return APIResponse.errorResponse(res, error.message);
     }
 };
 
