@@ -36,7 +36,7 @@ const Sidebar = () => {
                         className={activeLink === '/studentclassroom' ? 'active' : ''}
                         onClick={() => handleClick('/studentclassroom')}
                     >
-                        <Link to="/studentclassroom">Classroom</Link>
+                        <Link to="/classroom">Classroom</Link>
                     </li>
                     <li
                         className={activeLink === '/studentlogout' ? 'active' : ''}

@@ -33,11 +33,11 @@ const Sidebar = () => {
             </header>
             <aside className="sidebar">
                 <ul>
-                    <li 
-                        className={activeLink === '/' ? 'active' : ''}
-                        onClick={() => handleClick('/')}
+                <li 
+                        className={activeLink === '/classroom' ? 'active' : ''}
+                        onClick={() => handleClick('/classroom')}
                     >
-                        <Link to="/">Dashboard</Link>
+                        <Link to="/classroom">Classrooms</Link>
                     </li>
                     
                     <li 
@@ -45,6 +45,20 @@ const Sidebar = () => {
                         onClick={() => handleClick('/createclassroom')}
                     >
                         <Link to="/createclassroom">Create Classroom</Link>
+                    </li>
+
+                    <li 
+                        className={activeLink === '/assignteacher' ? 'active' : ''}
+                        onClick={() => handleClick('/assignteacher')}
+                    >
+                        <Link to="/assignteacher">Assign Teacher</Link>
+                    </li>
+                   
+                    <li 
+                        className={activeLink === '/assignstudent' ? 'active' : ''}
+                        onClick={() => handleClick('/assignstudent')}
+                    >
+                        <Link to="/assignstudent">Assign Student</Link>
                     </li>
 
                     <li 
