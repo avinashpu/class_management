@@ -1,98 +1,129 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Alert, Spinner } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import axiosInstance from '../../config/axiosInstance'; // Import axiosInstance
+import { useLocation, useNavigate } from 'react-router-dom';
 import './TeacherList.css';
-import { API_URL } from '../../util';
 
-const TeacherList = () => {
-  const [teachers, setTeachers] = useState([]);
-  const [loading, setLoading] = useState(true);
+const EditTeacherForm = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { selectedTeacher } = location.state || {};
+
+  const [teacher, setTeacher] = useState(selectedTeacher || null);
+  const [loading, setLoading] = useState(!selectedTeacher);
   const [error, setError] = useState(null);
-  const [deletingId, setDeletingId] = useState(null); // To track which teacher is being deleted
+
+  const formik = useFormik({
+    initialValues: {
+      name: teacher?.name || '',
+      email: teacher?.email || '',
+      role: teacher?.role || 'Teacher', // Assuming default role value is Teacher
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required('Name is required'),
+      email: Yup.string().email('Invalid email address').required('Email is required'),
+      role: Yup.string().required('Role is required'),
+    }),
+    onSubmit: async (values) => {
+      try {
+        await axiosInstance.put(`/api/auth/teachers/${selectedTeacher?._id}`, values); // Use axiosInstance
+        navigate('/teacherlist'); // Navigate back to teacher list after successful update
+      } catch (error) {
+        console.error('Error updating teacher:', error);
+        setError(error.response?.data?.message || 'Failed to update teacher. Please try again later.');
+      }
+    },
+  });
 
   useEffect(() => {
-    const fetchTeachers = async () => {
-      try {
-        const response = await axiosInstance.get(`${API_URL}/api/auth/teachers`); // Use axiosInstance
-        setTeachers(response.data.data);
-      } catch (err) {
-        console.error('Error fetching teachers:', err);
-        setError('Failed to load teachers.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!selectedTeacher) {
+      const fetchTeacher = async () => {
+        try {
+          const response = await axiosInstance.get(`/api/auth/teachers/${selectedTeacher?._id}`); // Use axiosInstance
+          setTeacher(response.data.data);
+          formik.setValues({
+            name: response.data.data.name,
+            email: response.data.data.email,
+            role: response.data.data.role,
+          });
+        } catch (err) {
+          console.error('Error fetching teacher:', err);
+          setError('Failed to fetch teacher data. Please try again later.');
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchTeachers();
-  }, []);
-
-  const handleDelete = async (teacher) => {
-    if (window.confirm('Are you sure you want to delete this teacher?')) {
-      setDeletingId(teacher._id); // Set deleting ID to show spinner
-      try {
-        await axiosInstance.delete(`${API_URL}/api/auth/teachers/${teacher._id}`); // Use axiosInstance
-        setTeachers((prevTeachers) => prevTeachers.filter(t => t._id !== teacher._id)); // Remove teacher from list
-        setDeletingId(null); // Reset deleting ID
-      } catch (err) {
-        console.error('Error deleting teacher:', err);
-        setError('Failed to delete teacher.');
-        setDeletingId(null); // Reset deleting ID
-      }
+      fetchTeacher();
+    } else {
+      setLoading(false); // If selectedTeacher is available, no need to fetch
     }
-  };
+  }, [selectedTeacher]);
 
   if (loading) {
-    return (
-      <div className="teacher-list-container">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
+    return <div className="edit-teacher-form-container">Loading...</div>;
   }
 
   return (
-    <div className="teacher-list-page">
-      <h1>Teacher List</h1>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {teachers.length > 0 ? (
-            teachers.map((teacher) => (
-              <tr key={teacher._id}>
-                <td>{teacher.name}</td>
-                <td>{teacher.email}</td>
-                <td>
-                  <Link to={`/edit-teacher/${teacher._id}`} state={{ selectedTeacher: teacher }}>
-                    <Button variant="warning" className="me-2">Edit</Button>
-                  </Link>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDelete(teacher)}
-                    disabled={deletingId === teacher._id}
-                  >
-                    {deletingId === teacher._id ? 'Deleting...' : 'Remove'}
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="3">No teachers found.</td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+    <div className="edit-teacher-form-container">
+      <h1>Edit Teacher</h1>
+      {error && <div className="error-message">{error}</div>}
+      <form onSubmit={formik.handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Name</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.name}
+            className={formik.touched.name && formik.errors.name ? 'input-error' : ''}
+          />
+          {formik.touched.name && formik.errors.name ? (
+            <div className="error-message">{formik.errors.name}</div>
+          ) : null}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.email}
+            className={formik.touched.email && formik.errors.email ? 'input-error' : ''}
+          />
+          {formik.touched.email && formik.errors.email ? (
+            <div className="error-message">{formik.errors.email}</div>
+          ) : null}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="role">Role</label>
+          <select
+            id="role"
+            name="role"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.role}
+            className={formik.touched.role && formik.errors.role ? 'input-error' : ''}
+          >
+            <option value="Teacher">Teacher</option>
+            <option value="Student">Student</option>
+          </select>
+          {formik.touched.role && formik.errors.role ? (
+            <div className="error-message">{formik.errors.role}</div>
+          ) : null}
+        </div>
+
+        <button type="submit">Update</button>
+      </form>
     </div>
   );
 };
 
-export default TeacherList;
+export default EditTeacherForm;

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { API_URL } from '../util';
+import axiosInstance from '../config/axiosInstance'; // Import axiosInstance
+import { useLocation, useNavigate } from 'react-router-dom';
 import './EditTeacherForm.css';
 
 const EditStudentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { studentId } = useParams();
   const { selectedStudent } = location.state || {}; // Extract student data from location state
 
   const [student, setStudent] = useState(selectedStudent || null);
@@ -29,11 +27,11 @@ const EditStudentForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await axios.put(`${API_URL}/api/auth/users/${studentId}`, values);
+        await axiosInstance.put(`/api/auth/users/${selectedStudent?._id}`, values); // Use axiosInstance
         navigate('/studentlist'); // Navigate back to student list after successful update
       } catch (error) {
         console.error('Error updating student:', error);
-        setError('Failed to update student. Please try again later.');
+        setError(error.response?.data?.message || 'Failed to update student. Please try again later.');
       }
     },
   });
@@ -42,7 +40,7 @@ const EditStudentForm = () => {
     if (!selectedStudent) {
       const fetchStudent = async () => {
         try {
-          const response = await axios.get(`${API_URL}/api/auth/students/${studentId}`);
+          const response = await axiosInstance.get(`/api/auth/students/${selectedStudent?._id}`); // Use axiosInstance
           setStudent(response.data.data);
           formik.setValues({
             name: response.data.data.name,
@@ -61,12 +59,11 @@ const EditStudentForm = () => {
     } else {
       setLoading(false); // If selectedStudent is available, no need to fetch
     }
-  }, [studentId, selectedStudent]);
+  }, [ selectedStudent]);
 
   if (loading) {
     return <div className="edit-student-form-container">Loading...</div>;
   }
-
   return (
     <div className="edit-student-form-container">
       <h1>Edit Student</h1>
@@ -122,7 +119,7 @@ const EditStudentForm = () => {
           ) : null}
         </div>
 
-        <button type="submit" className="submit-button">Update</button>
+        <button type="submit">Update</button>
       </form>
     </div>
   );

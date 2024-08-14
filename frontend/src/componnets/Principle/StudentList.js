@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../config/axiosInstance'; // Import axiosInstance
 import { Table, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../../util';
 import './TeacherList.css';
 
 const StudentList = () => {
@@ -14,11 +13,10 @@ const StudentList = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        // Ensure the URL is correctly formatted
-        const url = `${API_URL}/api/auth/students`;
+        const url = '/api/auth/students'; // Endpoint URL
         console.log('Fetching students from:', url); // Debug log
 
-        const response = await axios.get(url);
+        const response = await axiosInstance.get(url); // Use axiosInstance
         console.log('Fetched students:', response.data); // Debug log
         setStudents(response.data.data); // Adjust this based on your API response
       } catch (err) {
@@ -36,7 +34,7 @@ const StudentList = () => {
     if (window.confirm('Are you sure you want to delete this student?')) {
       setDeletingId(student._id);
       try {
-        await axios.delete(`${API_URL}/api/auth/students/${student._id}`);
+        await axiosInstance.delete(`/api/auth/users/${student._id}`); // Use axiosInstance
         setStudents((prevStudents) => prevStudents.filter(s => s._id !== student._id));
         setDeletingId(null);
       } catch (err) {

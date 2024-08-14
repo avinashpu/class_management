@@ -8,7 +8,7 @@ import './EditTeacherForm.css';
 const EditTeacherForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { teacherId } = useParams();
+  
   const { selectedTeacher } = location.state || {};
 
   const formik = useFormik({
@@ -24,7 +24,7 @@ const EditTeacherForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await axiosInstance.put(`/api/auth/users/${teacherId}`, values);
+        await axiosInstance.put(`/api/auth/users/${selectedTeacher?._id}`, values);
         alert('update successfully!');
         navigate('/teacherlist'); // Navigate back to teacher list after successful update
       } catch (error) {

@@ -31,7 +31,10 @@ const Dashboard = () => {
         >  
           <h2>Login Teacher</h2>  
         </div>  
-      </div>  
+      </div> 
+      <footer className="footer">
+      <p>&copy; 2024 Avinash Kumar. All rights reserved.</p>
+    </footer> 
     </div>  
   );  
 };  
