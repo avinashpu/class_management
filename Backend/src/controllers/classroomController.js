@@ -94,4 +94,21 @@ const assignStudents = async (req, res) => {
     }
 };
 
-module.exports = { createClassroom, assignTeacher, assignStudents };
+// Get all classrooms
+const getAllClassrooms = async (req, res) => {
+    console.log('Get All Classrooms Request');
+
+    try {
+        const classrooms = await Classroom.find().populate('teacher students'); // Populate fields if needed
+        console.log('All Classrooms:', classrooms);
+
+        APIResponse.successResponse(res, 'Classrooms retrieved successfully', classrooms);
+    } catch (error) {
+        console.error('Get All Classrooms Error:', error); 
+        APIResponse.errorResponse(res, 'Failed to retrieve classrooms');
+    }
+};
+
+module.exports = { createClassroom, assignTeacher, assignStudents, getAllClassrooms };
+
+
