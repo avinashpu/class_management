@@ -1,9 +1,8 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { API_URL } from '../util';
+import axiosInstance from '../config/axiosInstance'; // Import axiosInstance instead of axios
 import './EditTeacherForm.css';
 
 const EditTeacherForm = () => {
@@ -25,7 +24,8 @@ const EditTeacherForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await axios.put(`${API_URL}/api/auth/users/${teacherId}`, values);
+        await axiosInstance.put(`/api/auth/users/${teacherId}`, values);
+        alert('update successfully!');
         navigate('/teacherlist'); // Navigate back to teacher list after successful update
       } catch (error) {
         console.error('Error updating teacher:', error);

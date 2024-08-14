@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Table, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../../util';
+import axiosInstance from '../../config/axiosInstance'; // Import axiosInstance
 import './TeacherList.css';
+import { API_URL } from '../../util';
 
 const TeacherList = () => {
   const [teachers, setTeachers] = useState([]);
@@ -14,7 +14,7 @@ const TeacherList = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/auth/teachers`);
+        const response = await axiosInstance.get(`${API_URL}/api/auth/teachers`); // Use axiosInstance
         setTeachers(response.data.data);
       } catch (err) {
         console.error('Error fetching teachers:', err);
@@ -31,7 +31,7 @@ const TeacherList = () => {
     if (window.confirm('Are you sure you want to delete this teacher?')) {
       setDeletingId(teacher._id); // Set deleting ID to show spinner
       try {
-        await axios.delete(`${API_URL}/api/auth/teachers/${teacher._id}`);
+        await axiosInstance.delete(`${API_URL}/api/auth/teachers/${teacher._id}`); // Use axiosInstance
         setTeachers((prevTeachers) => prevTeachers.filter(t => t._id !== teacher._id)); // Remove teacher from list
         setDeletingId(null); // Reset deleting ID
       } catch (err) {
