@@ -1,12 +1,11 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { API_URL } from '../util';
-import './style.css';  // Ensure this import is present
 import axiosInstance from '../config/axiosInstance';
+import { API_URL } from '../util';
+import './style.css';
 
-const CreateStudentForm = () => {
+const CreateTeacherForm = () => {
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -20,8 +19,10 @@ const CreateStudentForm = () => {
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                await axiosInstance.post(`${API_URL}/api/auth/register`, { ...values, role: 'Student' });
-                alert('Student registered successfully!');
+                await axiosInstance.post(`${API_URL}/api/auth/register`, { ...values, role: 'Teacher' }, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                });
+                alert('Teacher registered successfully!');
                 // Clear form or redirect if needed
             } catch (error) {
                 console.error('Registration Error:', error);
@@ -34,7 +35,7 @@ const CreateStudentForm = () => {
 
     return (
         <div className="create-form-container">
-            <h1>Create Student</h1>
+            <h1>Create Teacher</h1>
             <div className="form-container">
                 <form onSubmit={formik.handleSubmit}>
                     <input
@@ -69,11 +70,11 @@ const CreateStudentForm = () => {
 
                     {formik.errors.api ? <div className="error-message">{formik.errors.api}</div> : null}
                     
-                    <button type="submit" disabled={formik.isSubmitting}>Register Student</button>
+                    <button type="submit" disabled={formik.isSubmitting}>Register Teacher</button>
                 </form>
             </div>
         </div>
     );
 };
 
-export default CreateStudentForm;
+export default CreateTeacherForm;

@@ -11,6 +11,8 @@ import CreateStudentForm from './componnets/Createstudentform';
 import TeacherList from './componnets/Principle/TeacherList';
 import StudentList from './componnets/Principle/StudentList';
 import ClassroomForm from './componnets/Principle/ClassroomForm';
+import CreateTeacherForm from './componnets/CreateTeacherForm';
+import UpdateUserForm from './componnets/Updateform';
 const App = () => {
   return (
     <Router>
@@ -22,10 +24,12 @@ const App = () => {
         <Route path="/principlesidebar" element={< Principlesidebar />} />
         <Route path="/teachersidebar" element={< Teachersidebar />} />
         <Route path="/studentsidebar" element={< Studentsidebar />} />
-        <Route path="/createstudentform" element={< CreateStudentForm />} />
+        <Route path="/createstudent" element={< CreateStudentForm />} />
         <Route path="/teacherlist" element={< TeacherList />} />
         <Route path="/studentlist" element={< StudentList />} />
         <Route path="/createclassroom" element={< ClassroomForm />} />
+        <Route path="/createteacher" element={< CreateTeacherForm />} />
+        <Route path="/updateform" element={< UpdateUserForm />} />
       </Routes>
     </Router>
   );

@@ -58,7 +58,7 @@ const Sidebar = () => {
                         className={activeLink === '/createstudent' ? 'active' : ''}
                         onClick={() => handleClick('/createstudent')}
                     >
-                        <Link to="/createstudentform">create Student</Link>
+                        <Link to="/createstudent">create Student</Link>
                     </li>
 
                     <li 
