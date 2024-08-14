@@ -12,7 +12,7 @@ import TeacherList from './componnets/Principle/TeacherList';
 import StudentList from './componnets/Principle/StudentList';
 import ClassroomForm from './componnets/Principle/ClassroomForm';
 import CreateTeacherForm from './componnets/CreateTeacherForm';
-import UpdateUserForm from './componnets/Updateform';
+import EditTeacherForm from './componnets/EditTeacherForm';
 const App = () => {
   return (
     <Router>
@@ -29,7 +29,7 @@ const App = () => {
         <Route path="/studentlist" element={< StudentList />} />
         <Route path="/createclassroom" element={< ClassroomForm />} />
         <Route path="/createteacher" element={< CreateTeacherForm />} />
-        <Route path="/updateform" element={< UpdateUserForm />} />
+        <Route path="/edit-teacher/:userId" element={< EditTeacherForm/>} />
       </Routes>
     </Router>
   );

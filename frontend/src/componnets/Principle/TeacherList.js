@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../../util';
 import './TeacherList.css';
 
 const TeacherList = () => {
   const [teachers, setTeachers] = useState([]);
-  const [loading, setLoading] = useState(true); // To handle loading state
-  const [error, setError] = useState(null); // To handle error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deletingId, setDeletingId] = useState(null); // To track which teacher is being deleted
 
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/auth/teachers`);
-        setTeachers(response.data.data); // Accessing data array from response
+        setTeachers(response.data.data);
       } catch (err) {
         console.error('Error fetching teachers:', err);
         setError('Failed to load teachers.');
       } finally {
-        setLoading(false); // End loading state
+        setLoading(false);
       }
     };
 
@@ -27,27 +28,34 @@ const TeacherList = () => {
   }, []);
 
   const handleDelete = async (teacher) => {
-    try {
-      await axios.delete(`${API_URL}/api/auth/teachers/${teacher._id}`);
-      const response = await axios.get(`${API_URL}/api/auth/teachers`);
-      setTeachers(response.data.data); // Update the list after deletion
-    } catch (err) {
-      console.error('Error deleting teacher:', err);
-      setError('Failed to delete teacher.');
+    if (window.confirm('Are you sure you want to delete this teacher?')) {
+      setDeletingId(teacher._id); // Set deleting ID to show spinner
+      try {
+        await axios.delete(`${API_URL}/api/auth/teachers/${teacher._id}`);
+        setTeachers((prevTeachers) => prevTeachers.filter(t => t._id !== teacher._id)); // Remove teacher from list
+        setDeletingId(null); // Reset deleting ID
+      } catch (err) {
+        console.error('Error deleting teacher:', err);
+        setError('Failed to delete teacher.');
+        setDeletingId(null); // Reset deleting ID
+      }
     }
   };
 
   if (loading) {
-    return <div className="teacher-list-container">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="teacher-list-container error-message">{error}</div>;
+    return (
+      <div className="teacher-list-container">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   return (
     <div className="teacher-list-page">
       <h1>Teacher List</h1>
+      {error && <Alert variant="danger">{error}</Alert>}
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -63,10 +71,16 @@ const TeacherList = () => {
                 <td>{teacher.name}</td>
                 <td>{teacher.email}</td>
                 <td>
-                  <Link to={`/edit-teacher`} state={{ selectedTeacher: teacher }}>
+                  <Link to={`/edit-teacher/${teacher._id}`} state={{ selectedTeacher: teacher }}>
                     <Button variant="warning" className="me-2">Edit</Button>
                   </Link>
-                  <Button variant="danger" onClick={() => handleDelete(teacher)}>Remove</Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(teacher)}
+                    disabled={deletingId === teacher._id}
+                  >
+                    {deletingId === teacher._id ? 'Deleting...' : 'Remove'}
+                  </Button>
                 </td>
               </tr>
             ))
