@@ -8,24 +8,24 @@ const classroomSchema = new mongoose.Schema({
     },
     startTime: {
         type: String,
-        required: true // format should be HH:MM (24-hour format)
+        required: true 
     },
     endTime: {
         type: String,
-        required: true // format should be HH:MM (24-hour format)
+        required: true 
     },
     days: {
-        type: [String], // e.g., ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        type: [String], 
         required: true
     },
     teacher: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Teacher assigned to the classroom
+        ref: 'User', 
         required: false
     },
     students: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User' // Students assigned to the classroom
+        ref: 'User' 
     }]
 }, { timestamps: true });
 

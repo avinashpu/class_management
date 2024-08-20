@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axiosInstance from '../../config/axiosInstance'; // Import axiosInstance
+import axiosInstance from '../../config/axiosInstance'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 import './TeacherList.css';
 
@@ -18,7 +18,7 @@ const EditTeacherForm = () => {
     initialValues: {
       name: teacher?.name || '',
       email: teacher?.email || '',
-      role: teacher?.role || 'Teacher', // Assuming default role value is Teacher
+      role: teacher?.role || 'Teacher', 
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Name is required'),
@@ -27,8 +27,8 @@ const EditTeacherForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await axiosInstance.put(`/api/auth/teachers/${selectedTeacher?._id}`, values); // Use axiosInstance
-        navigate('/teacherlist'); // Navigate back to teacher list after successful update
+        await axiosInstance.put(`/api/auth/teachers/${selectedTeacher?._id}`, values); 
+        navigate('/teacherlist'); 
       } catch (error) {
         console.error('Error updating teacher:', error);
         setError(error.response?.data?.message || 'Failed to update teacher. Please try again later.');
@@ -40,7 +40,7 @@ const EditTeacherForm = () => {
     if (!selectedTeacher) {
       const fetchTeacher = async () => {
         try {
-          const response = await axiosInstance.get(`/api/auth/teachers/${selectedTeacher?._id}`); // Use axiosInstance
+          const response = await axiosInstance.get(`/api/auth/teachers/${selectedTeacher?._id}`); 
           setTeacher(response.data.data);
           formik.setValues({
             name: response.data.data.name,
@@ -57,7 +57,7 @@ const EditTeacherForm = () => {
 
       fetchTeacher();
     } else {
-      setLoading(false); // If selectedTeacher is available, no need to fetch
+      setLoading(false); 
     }
   }, [selectedTeacher]);
 

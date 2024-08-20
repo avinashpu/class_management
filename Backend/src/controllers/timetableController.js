@@ -14,8 +14,6 @@ const createTimetable = async (req, res) => {
             return APIResponse.notFoundResponse(res, 'Classroom not found');
         }
 
-        // Validate periods (e.g., no overlap and within classroom hours)
-        // Implement validation logic here
 
         const timetable = new Timetable({ classroom: classroomId, subject, periods });
         const newTimetable = await timetable.save();

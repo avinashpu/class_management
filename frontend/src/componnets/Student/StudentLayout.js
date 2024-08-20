@@ -1,4 +1,3 @@
-// src/layouts/StudentLayout.js
 import React from 'react';
 import Studentsidebar from '../Student/Studentsidebar';
 

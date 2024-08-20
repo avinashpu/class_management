@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axiosInstance from '../config/axiosInstance'; // Import axiosInstance
+import axiosInstance from '../config/axiosInstance'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 import './EditTeacherForm.css';
 
 const EditStudentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedStudent } = location.state || {}; // Extract student data from location state
+  const { selectedStudent } = location.state || {};
 
   const [student, setStudent] = useState(selectedStudent || null);
-  const [loading, setLoading] = useState(!selectedStudent); // Set loading state only if we need to fetch data
+  const [loading, setLoading] = useState(!selectedStudent); 
   const [error, setError] = useState(null);
 
   const formik = useFormik({
     initialValues: {
       name: student?.name || '',
       email: student?.email || '',
-      role: student?.role || 'Student', // Assuming a default role value
+      role: student?.role || 'Student', 
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Name is required'),
@@ -27,8 +27,8 @@ const EditStudentForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await axiosInstance.put(`/api/auth/users/${selectedStudent?._id}`, values); // Use axiosInstance
-        navigate('/studentlist'); // Navigate back to student list after successful update
+        await axiosInstance.put(`/api/auth/users/${selectedStudent?._id}`, values); 
+        navigate('/studentlist'); 
       } catch (error) {
         console.error('Error updating student:', error);
         setError(error.response?.data?.message || 'Failed to update student. Please try again later.');
@@ -40,7 +40,7 @@ const EditStudentForm = () => {
     if (!selectedStudent) {
       const fetchStudent = async () => {
         try {
-          const response = await axiosInstance.get(`/api/auth/students/${selectedStudent?._id}`); // Use axiosInstance
+          const response = await axiosInstance.get(`/api/auth/students/${selectedStudent?._id}`); 
           setStudent(response.data.data);
           formik.setValues({
             name: response.data.data.name,
@@ -57,7 +57,7 @@ const EditStudentForm = () => {
 
       fetchStudent();
     } else {
-      setLoading(false); // If selectedStudent is available, no need to fetch
+      setLoading(false); 
     }
   }, [ selectedStudent]);
 

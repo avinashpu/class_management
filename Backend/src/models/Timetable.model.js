@@ -12,15 +12,15 @@ const timetableSchema = new mongoose.Schema({
     },
     periods: [{
         day: {
-            type: String, // e.g., 'Monday'
+            type: String, 
             required: true
         },
         startTime: {
-            type: String, // format should be HH:MM
+            type: String, 
             required: true
         },
         endTime: {
-            type: String, // format should be HH:MM
+            type: String, 
             required: true
         }
     }]

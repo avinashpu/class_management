@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { API_URL } from '../../util';
-import './ClassroomForm.css'; // Ensure this CSS file is created
+import './ClassroomForm.css'; 
 
 const AssignStudentForm = () => {
     const [classrooms, setClassrooms] = useState([]);
@@ -16,7 +16,7 @@ const AssignStudentForm = () => {
             try {
                 const [classroomsResponse, studentsResponse] = await Promise.all([
                     axios.get(`${API_URL}/api/classrooms/details`),
-                    axios.get(`${API_URL}/api/auth/students`) // Fetch students
+                    axios.get(`${API_URL}/api/auth/students`) 
                 ]);
                 setClassrooms(classroomsResponse.data.data);
                 setStudents(studentsResponse.data.data);
@@ -34,7 +34,7 @@ const AssignStudentForm = () => {
     const formik = useFormik({
         initialValues: {
             classroomId: '',
-            studentIds: [], // Array for multiple student selection
+            studentIds: [], 
         },
         validationSchema: Yup.object({
             classroomId: Yup.string().required('Classroom is required'),

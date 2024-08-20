@@ -16,7 +16,6 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      // Make a POST request to the login endpoint
       const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
       
       console.log('response ',response);
@@ -24,19 +23,13 @@ const LoginPage = () => {
 
 
 
-      const token = response?.data?.data?.token; // Assume token is in response.data.token
-
-      // Check if the login was successful
+      const token = response?.data?.data?.token; 
       if (response.status === 200 && response.data.success) {
-        // Store the token
     localStorage.setItem('authToken', token);
 
-    // Set the token in Axios default headers
     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setSuccess('Login successful!');
         setError('');
-
-        // Navigate to the dashboard after successful login
         navigate('/principlesidebar');
       } else {
         setError('Failed to log in. Please try again.');

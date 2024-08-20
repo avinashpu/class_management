@@ -8,7 +8,6 @@ const register = async (req, res) => {
     console.log('Register Request Body:', req.body);
 
     try {
-        // Check if the logged-in user is authorized to register a new user
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return APIResponse.unauthorizedResponse(res, 'Authorization header is missing or invalid');
@@ -143,7 +142,6 @@ const deleteUser = async (req, res) => {
     console.log('Delete Request for User ID:', id);
 
     try {
-        // Check if the logged-in user is authorized to delete a user
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return APIResponse.unauthorizedResponse(res, 'Authorization header is missing or invalid');

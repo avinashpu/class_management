@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../util';
-import './ClassroomList.css'; // Make sure to create this CSS file for styling
+import './ClassroomList.css'; 
 
 const ClassroomListPage = () => {
   const [classrooms, setClassrooms] = useState([]);
@@ -12,10 +12,7 @@ const ClassroomListPage = () => {
     const fetchClassrooms = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/classrooms/details`);
-        // Debugging: log the response data to check its structure
         console.log('Fetched classrooms:', response.data);
-
-        // Ensure response data has the expected structure
         if (Array.isArray(response.data.data)) {
           setClassrooms(response.data.data);
         } else {
@@ -48,8 +45,6 @@ const ClassroomListPage = () => {
             <p><strong>startTime:</strong> {classroom.startTime || 0}</p>
             <p><strong>endTime:</strong> {classroom.endTime || 0}</p>
             
-            
-            {/* Add more details as needed */}
           </div>
         ))}
       </div>

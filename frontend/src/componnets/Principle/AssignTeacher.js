@@ -17,8 +17,8 @@ const AssignTeacherForm = () => {
       const fetchClassroomsAndTeachers = async () => {
         try {
           const [classroomsResponse, teachersResponse] = await Promise.all([
-            axios.get(`${API_URL}/api/classrooms/details`), // Fetch classrooms
-            axios.get(`${API_URL}/api/auth/teachers`) // Fetch teachers
+            axios.get(`${API_URL}/api/classrooms/details`), 
+            axios.get(`${API_URL}/api/auth/teachers`) 
           ]);
           setClassrooms(classroomsResponse.data.data);
           setTeachers(teachersResponse.data.data);

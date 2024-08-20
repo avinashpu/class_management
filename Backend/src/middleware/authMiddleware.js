@@ -18,7 +18,7 @@ const protect = async (req, res, next) => {
             return APIResponse.unauthorizedResponse(res, 'Invalid token.');
         }
 
-        req.user = user; // Add user to request object
+        req.user = user; 
         next();
     } catch (error) {
         APIResponse.unauthorizedResponse(res, 'Invalid token.');

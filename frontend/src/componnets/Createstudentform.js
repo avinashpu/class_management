@@ -1,9 +1,8 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { API_URL } from '../util';
-import './style.css';  // Ensure this import is present
+import './style.css';  
 import axiosInstance from '../config/axiosInstance';
 
 const CreateStudentForm = () => {

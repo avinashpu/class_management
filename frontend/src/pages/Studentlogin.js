@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Img from '../Asset/Images/student.jpg';
-import { API_URL } from '../util';  // Import the API URL
-import axios from 'axios';  // Import axios for API calls
+import { API_URL } from '../util';  
+import axios from 'axios';  
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,15 +15,11 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      // Make a POST request to the login endpoint
       const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
 
-      // Check if the login was successful
       if (response.status === 200 && response.data.success) {
         setSuccess('Login successful!');
         setError('');
-
-        // Navigate to the student dashboard after successful login
         navigate('/studentsidebar');
       } else {
         setError('Failed to log in. Please try again.');

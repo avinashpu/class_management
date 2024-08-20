@@ -23,7 +23,7 @@ const CreateTeacherForm = () => {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
                 alert('Teacher registered successfully!');
-                // Clear form or redirect if needed
+               
             } catch (error) {
                 console.error('Registration Error:', error);
                 setErrors({ api: error.response?.data?.message || 'Failed to register' });
